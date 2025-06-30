@@ -10,37 +10,53 @@ const NavBar = () => {
 
   return (
     <header className="w-full border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-gray-900 sticky top-0 z-50 shadow-sm">
-      <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 md:px-8 py-3 md:py-4">
-        {/* Logo and Brand */}
-        <Link href="/" className="flex items-center gap-3">
-          <Image
-            src="/logo.svg"
-            alt="AI Agent Logo"
-            width={48}
-            height={48}
-            className="hover:opacity-80 transition-opacity"
-            priority
-          />
-          <span className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white select-none">
-            AI Agent
-          </span>
-        </Link>
+      <nav className="max-w-7xl mx-auto grid grid-cols-3 items-center px-6 md:px-8 py-3 md:py-4">
+        {/* Left: Logo */}
+        <div className="flex items-center">
+          <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/logo.svg"
+              alt="AI Agent Logo"
+              width={48}
+              height={48}
+              className="hover:opacity-80 transition-opacity"
+              priority
+            />
+            <span className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white select-none">
+              AI Agent
+            </span>
+          </Link>
+        </div>
 
-        {/* Navigation & User Actions */}
-        <div className="flex items-center gap-5">
+        {/* Center: Navigation Links */}
+        <div className="hidden md:flex justify-center items-center gap-6">
+          <Link
+            href="/blogs"
+            className="text-base font-medium text-slate-700 dark:text-slate-200 hover:text-sky-600 transition-colors"
+          >
+            Blogs
+          </Link>
+          <Link
+            href="/projects"
+            className="text-base font-medium text-slate-700 dark:text-slate-200 hover:text-sky-600 transition-colors"
+          >
+            Projects
+          </Link>
+        </div>
+
+        {/* Right: User / Login */}
+        <div className="flex justify-end items-center gap-5">
           {user ? (
             <>
-              {/* User profile with dropdown */}
               <UserButton
                 appearance={{
                   elements: {
                     userButtonAvatarBox: "w-10 h-10 rounded-full",
-                    userButtonTrigger: "focus:ring-2 focus:ring-sky-500 focus:outline-none",
+                    userButtonTrigger:
+                      "focus:ring-2 focus:ring-sky-500 focus:outline-none",
                   },
                 }}
               />
-
-              {/* Dashboard Link */}
               <Link href="/dashboard" passHref>
                 <Button
                   as="a"
