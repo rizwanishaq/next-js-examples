@@ -20,9 +20,9 @@ export default function ProjectsPage() {
       slug: "ai-document-summarizer",
     },
     {
-      title: "Real-Time Speech Analytics",
+      title: "Real-Time Speech Denoiser",
       excerpt: "A dashboard to monitor and analyze live call center interactions using speech recognition.",
-      slug: "real-time-speech-analytics",
+      slug: "denoiser",
     },
   ];
 
