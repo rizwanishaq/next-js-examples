@@ -8,7 +8,9 @@ const isPublicRoute = createRouteMatcher([
     '/blogs',
     '/projects',
     '/blogs(.*)',
-    '/projects(.*)'
+    '/projects(.*)',
+    '/denoiser_model.onnx',
+    '/worklets(.*)'
 
 ])
 

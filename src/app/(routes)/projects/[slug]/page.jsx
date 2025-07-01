@@ -1,102 +1,224 @@
 "use client";
 
-import { useParams } from "next/navigation";
-import Link from "next/link";
-import { motion } from "framer-motion";
+import React, { useState, useEffect, useRef } from "react";
+import * as ort from "onnxruntime-web";
 
-export default function ProjectDetailPage() {
-  const params = useParams();
-  const slug = params.slug;
+// global model state
+let session = null;
+let modelState = null;
+let attenLimDb = null;
 
-  // Match the same projects data from the main projects page
-  const projects = [
-    {
-      slug: "conversational-voicebot",
-      title: "Conversational Voicebot",
-      excerpt: "An end-to-end voice agent powered by ASR, NLU, and TTS with real-time streaming.",
-      details: `This project builds a voice agent capable of understanding and responding
-        to user requests in real time using automatic speech recognition, natural language
-        understanding, and text-to-speech technologies. It supports natural conversations
-        with continuous streaming audio processing.`,
-    },
-    {
-      slug: "ai-document-summarizer",
-      title: "AI Document Summarizer",
-      excerpt: "A tool that summarizes long documents using transformer-based language models.",
-      details: `This project implements a transformer-based summarization system
-        that ingests long documents and produces concise summaries to improve
-        reading efficiency and comprehension.`,
-    },
-    {
-      slug: "real-time-speech-analytics",
-      title: "Real-Time Speech Analytics",
-      excerpt: "A dashboard to monitor and analyze live call center interactions using speech recognition.",
-      details: `A dashboard solution that leverages speech recognition and analytics
-        to provide real-time insights into call center conversations, enabling
-        monitoring of key metrics and agent performance.`,
-    },
-  ];
+const MODEL_SAMPLE_RATE = 48000;
+const FRAME_SIZE = 480;
 
-  const project = projects.find((p) => p.slug === slug);
+async function initializeDenoiserModel() {
+  if (session) return true;
 
-  if (!project) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center text-center p-8">
-        <h1 className="text-3xl font-bold mb-4">Project not found</h1>
-        <Link
-          href="/projects"
-          className="text-primary hover:underline font-semibold"
-        >
-          Back to projects
-        </Link>
-      </div>
-    );
+  try {
+    ort.env.wasm.simd = true;
+    session = await ort.InferenceSession.create("/denoiser_model.onnx", {
+      executionProviders: ["wasm"],
+      graphOptimizationLevel: "extended",
+    });
+    console.log("ONNX model loaded");
+
+    modelState = new ort.Tensor("float32", new Float32Array(45304), [45304]);
+    attenLimDb = new ort.Tensor("float32", new Float32Array([0.0]), []);
+
+    return true;
+  } catch (e) {
+    console.error("Failed to load ONNX model:", e);
+    return false;
+  }
+}
+
+async function processAudioFrame(frameArray) {
+  if (!session || !modelState || !attenLimDb) {
+    console.error("Model not initialized.");
+    return null;
   }
 
+  if (!(frameArray instanceof Float32Array) || frameArray.length !== FRAME_SIZE) {
+    console.error(`Invalid frame`);
+    return new Float32Array(FRAME_SIZE).fill(0);
+  }
+
+  try {
+    const feeds = {
+      input_frame: new ort.Tensor("float32", frameArray, [FRAME_SIZE]),
+      states: modelState,
+      atten_lim_db: attenLimDb,
+    };
+
+    const results = await session.run(feeds);
+
+    const enhancedFrame = results.enhanced_audio_frame.data;
+    modelState = results.new_states;
+
+    let max = 0;
+    for (let i = 0; i < enhancedFrame.length; i++) {
+      const abs = Math.abs(enhancedFrame[i]);
+      if (abs > max) max = abs;
+    }
+    if (max > 1) {
+      for (let i = 0; i < enhancedFrame.length; i++) {
+        enhancedFrame[i] /= max;
+      }
+    }
+    return enhancedFrame;
+  } catch (e) {
+    console.error("process frame error", e);
+    return new Float32Array(FRAME_SIZE).fill(0);
+  }
+}
+
+export default function DenoiserPage() {
+  const [modelReady, setModelReady] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [error, setError] = useState(null);
+  const [testOutput, setTestOutput] = useState("");
+  const [processingTest, setProcessingTest] = useState(false);
+
+  const audioContextRef = useRef(null);
+  const mediaStreamSourceRef = useRef(null);
+  const workletNodeRef = useRef(null);
+
+  useEffect(() => {
+    initializeDenoiserModel().then((ready) => {
+      setModelReady(ready);
+      if (!ready) setError("Model load failed");
+    });
+    return () => {
+      if (audioContextRef.current) audioContextRef.current.close();
+    };
+  }, []);
+
+  const startRecording = async () => {
+    if (!modelReady) {
+      setError("Model not ready");
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+
+      audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)({
+        sampleRate: MODEL_SAMPLE_RATE,
+      });
+
+      await audioContextRef.current.audioWorklet.addModule("/worklets/denoiser-processor.js");
+
+      workletNodeRef.current = new AudioWorkletNode(audioContextRef.current, "denoiser-processor");
+      workletNodeRef.current.port.onmessage = async (event) => {
+        const { frame } = event.data;
+        if (frame) {
+          const enhancedFrame = await processAudioFrame(new Float32Array(frame));
+          workletNodeRef.current.port.postMessage({ enhancedFrame });
+        }
+      };
+
+      mediaStreamSourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
+      mediaStreamSourceRef.current.connect(workletNodeRef.current);
+      workletNodeRef.current.connect(audioContextRef.current.destination);
+
+      setIsRecording(true);
+      setError(null);
+      console.log("Recording started with AudioWorklet");
+    } catch (e) {
+      console.error(e);
+      setError(e.message);
+    }
+  };
+
+  const stopRecording = () => {
+    if (workletNodeRef.current) {
+      workletNodeRef.current.disconnect();
+      workletNodeRef.current = null;
+    }
+    if (mediaStreamSourceRef.current) {
+      mediaStreamSourceRef.current.disconnect();
+      mediaStreamSourceRef.current.mediaStream.getTracks().forEach((track) => track.stop());
+      mediaStreamSourceRef.current = null;
+    }
+    if (audioContextRef.current) {
+      audioContextRef.current.close();
+      audioContextRef.current = null;
+    }
+    setIsRecording(false);
+  };
+
+  const handleProcessTestFrame = async () => {
+    if (!modelReady) {
+      alert("Model not ready yet!");
+      return;
+    }
+    setProcessingTest(true);
+    try {
+      const dummyFrame = new Float32Array(FRAME_SIZE);
+      for (let i = 0; i < FRAME_SIZE; i++) {
+        dummyFrame[i] = Math.sin(i * 0.1) * 0.5;
+      }
+      const denoised = await processAudioFrame(dummyFrame);
+      setTestOutput(denoised.slice(0, 20).join(", ") + "...");
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setProcessingTest(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-background px-4 py-10 md:py-20 flex flex-col items-center">
-      <main className="max-w-3xl">
-        <motion.h1
-          className="text-4xl md:text-5xl font-extrabold text-slate-800 dark:text-slate-100 mb-6 text-center"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {project.title}
-        </motion.h1>
+    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+      <h1>Client-Side Audio Denoiser (48kHz, AudioWorklet)</h1>
+      <p>Model Status: {modelReady ? "Loaded" : "Loading..."}</p>
+      {error && <p style={{ color: "red" }}>Error: {error}</p>}
 
-        <motion.section
-          className="prose dark:prose-invert text-neutral-700 dark:text-neutral-300 mb-6"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+      <div style={{ marginBottom: "20px" }}>
+        <button
+          onClick={isRecording ? stopRecording : startRecording}
+          disabled={!modelReady}
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            backgroundColor: isRecording ? "#dc3545" : "#28a745",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            marginRight: "10px",
+          }}
         >
-          <p>{project.excerpt}</p>
-        </motion.section>
+          {isRecording ? "Stop Live Denoising" : "Start Live Denoising"}
+        </button>
+        <button
+          onClick={handleProcessTestFrame}
+          disabled={!modelReady || processingTest}
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            backgroundColor: "#007bff",
+            color: "white",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+          }}
+        >
+          {processingTest ? "Processing..." : "Process Test Frame"}
+        </button>
+      </div>
 
-        <motion.article
-          className="prose dark:prose-invert text-neutral-700 dark:text-neutral-300"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-        >
-          <p>{project.details}</p>
-        </motion.article>
+      {isRecording && <p>🎤 Listening and denoising in real time with AudioWorklet</p>}
 
-        <motion.div
-          className="mt-10 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7, duration: 0.5 }}
-        >
-          <Link
-            href="/projects"
-            className="inline-block mt-4 text-primary font-semibold hover:underline"
-          >
-            ← Back to projects list
-          </Link>
-        </motion.div>
-      </main>
+      {testOutput && (
+        <div>
+          <h3>Test Frame Output</h3>
+          <p style={{ fontSize: "12px", maxWidth: "600px", wordBreak: "break-all" }}>{testOutput}</p>
+        </div>
+      )}
+
+      <p style={{ fontSize: "12px", color: "#666" }}>
+        Note: AudioWorklet is used for smooth low-latency playback. ONNX runs on the main thread, streamed
+        from the worklet.
+      </p>
     </div>
   );
 }
