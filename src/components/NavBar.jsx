@@ -9,7 +9,7 @@ const NavBar = () => {
   const { user } = useUser();
 
   return (
-    <header className="w-full border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-gray-900 sticky top-0 z-50 shadow-sm">
+    <header className="w-full border-b border-neutral-200 dark:border-neutral-800 bg-white dark:bg-slate-950 sticky top-0 z-50 shadow-sm backdrop-blur-md bg-opacity-80 dark:bg-opacity-80">
       <nav className="max-w-7xl mx-auto grid grid-cols-3 items-center px-6 md:px-8 py-3 md:py-4">
         {/* Left: Logo */}
         <div className="flex items-center">
@@ -22,7 +22,7 @@ const NavBar = () => {
               className="hover:opacity-80 transition-opacity"
               priority
             />
-            <span className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white select-none">
+            <span className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 select-none">
               AI Agent
             </span>
           </Link>
@@ -32,13 +32,13 @@ const NavBar = () => {
         <div className="hidden md:flex justify-center items-center gap-6">
           <Link
             href="/blogs"
-            className="text-base font-medium text-slate-700 dark:text-slate-200 hover:text-sky-600 transition-colors"
+            className="text-base font-medium text-slate-700 dark:text-slate-200 hover:text-primary transition-colors"
           >
             Blogs
           </Link>
           <Link
             href="/projects"
-            className="text-base font-medium text-slate-700 dark:text-slate-200 hover:text-sky-600 transition-colors"
+            className="text-base font-medium text-slate-700 dark:text-slate-200 hover:text-primary transition-colors"
           >
             Projects
           </Link>
@@ -53,16 +53,16 @@ const NavBar = () => {
                   elements: {
                     userButtonAvatarBox: "w-10 h-10 rounded-full",
                     userButtonTrigger:
-                      "focus:ring-2 focus:ring-sky-500 focus:outline-none",
+                      "focus:ring-2 focus:ring-primary focus:outline-none",
                   },
                 }}
               />
               <Link href="/dashboard" passHref>
                 <Button
                   as="a"
-                  className="hidden md:inline-flex cursor-pointer px-5 py-2 text-base font-semibold rounded-md
-                             bg-sky-600 text-white hover:bg-sky-700 focus-visible:ring-2 focus-visible:ring-sky-500
-                             transition-colors duration-200"
+                  className="hidden md:inline-flex cursor-pointer px-5 py-2 text-base font-semibold rounded-full
+                             bg-gradient-to-r from-primary to-purple-600 text-white hover:brightness-110 focus-visible:ring-2 focus-visible:ring-primary
+                             transition duration-200"
                 >
                   Dashboard
                 </Button>
@@ -72,9 +72,9 @@ const NavBar = () => {
             <Link href="/sign-in" passHref>
               <Button
                 as="a"
-                className="px-5 py-2 text-base font-semibold rounded-md
-                           bg-sky-600 text-white hover:bg-sky-700 focus-visible:ring-2 focus-visible:ring-sky-500
-                           transition-colors duration-200"
+                className="px-5 py-2 text-base font-semibold rounded-full
+                           bg-gradient-to-r from-primary to-purple-600 text-white hover:brightness-110 focus-visible:ring-2 focus-visible:ring-primary
+                           transition duration-200"
               >
                 Login
               </Button>

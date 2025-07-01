@@ -5,7 +5,6 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function Home() {
-
   return (
     <div className="min-h-screen bg-background px-4 py-10 md:py-20 flex flex-col items-center">
 
@@ -16,7 +15,7 @@ export default function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          {["Conversational", "Voice", "Agent"].map((word, index) => (
+          {["Conversational", "AI", "Assistant"].map((word, index) => (
             <motion.span
               key={index}
               className="inline-block mr-2"
@@ -39,7 +38,7 @@ export default function Home() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6, duration: 0.5 }}
         >
-          Enable natural, real-time conversations in your app. Our AI-powered voice agent listens, understands, and takes action—just like a human.
+          Power natural conversations in text and voice. Our AI assistant understands, responds, and takes action in real-time — making your applications smarter than ever.
         </motion.p>
 
         <motion.div
@@ -49,8 +48,12 @@ export default function Home() {
           transition={{ delay: 0.9, duration: 0.5 }}
         >
           <Link href={"/ai_agent"}>
-            <Button className="w-60 text-lg py-6 font-semibold dark:bg-white dark:text-black dark:hover:bg-gray-200">
-              Launch AI Voice Agent
+            <Button
+              className="w-60 text-lg py-6 font-semibold rounded-full
+                        bg-gradient-to-r from-primary to-purple-600 text-white hover:brightness-110
+                        dark:bg-gradient-to-r dark:from-primary dark:to-purple-600"
+            >
+              Launch AI Agent
             </Button>
           </Link>
         </motion.div>
@@ -74,16 +77,9 @@ export default function Home() {
                 <stop offset="75%" stopColor="#ec4899" />
                 <stop offset="100%" stopColor="#f97316" />
               </linearGradient>
-              <animate
-                xlinkHref="#waveGradient"
-                attributeName="x1"
-                values="0%;100%;0%"
-                dur="10s"
-                repeatCount="indefinite"
-              />
             </defs>
 
-            {/* Bottom wave - larger and more transparent */}
+            {/* Bottom wave */}
             <motion.path
               fill="url(#waveGradient)"
               fillOpacity="0.3"
@@ -98,7 +94,7 @@ export default function Home() {
               transition={{ repeat: Infinity, duration: 12, ease: "easeInOut" }}
             />
 
-            {/* Top wave - smaller, more opaque */}
+            {/* Top wave */}
             <motion.path
               fill="url(#waveGradient)"
               fillOpacity="0.5"
