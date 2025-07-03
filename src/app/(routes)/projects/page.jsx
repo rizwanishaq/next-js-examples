@@ -7,7 +7,7 @@ import { useRef } from "react";
 import { ArrowRight, Bot, Waves, Mic } from "lucide-react";
 
 export default function ProjectsPage() {
-  const latestRef = useRef<HTMLDivElement>(null);
+  const latestRef = useRef(null);
 
   const projects = [
     {
