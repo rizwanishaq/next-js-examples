@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useRef } from "react";
-import { ArrowRight, Bot, Waves } from "lucide-react";
+import { ArrowRight, Bot, Waves, Mic } from "lucide-react";
 
 export default function ProjectsPage() {
   const latestRef = useRef<HTMLDivElement>(null);
@@ -24,6 +24,12 @@ export default function ProjectsPage() {
       slug: "denoiser",
       icon: Waves,
     },
+    {
+      title: "Voice Activity Detection",
+      excerpt: "Detect speech activity with microphone input and VAD.",
+      slug: "vad",
+      icon: Mic,
+    }
   ];
 
   const scrollToLatest = () => {
