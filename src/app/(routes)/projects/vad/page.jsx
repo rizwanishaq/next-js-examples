@@ -78,7 +78,19 @@ export default function VoiceActivityPage() {
   };
 
   return (
-    <main className="min-h-screen px-6 py-12 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 dark:from-neutral-900 dark:via-neutral-950 dark:to-neutral-900 transition-colors flex items-center justify-center">
+    <main className="min-h-screen px-6 py-12 bg-gradient-to-b from-slate-50 via-slate-100 to-slate-200 dark:from-neutral-900 dark:via-neutral-950 dark:to-neutral-900 transition-colors flex flex-col items-center">
+      {/* Description block at top */}
+      <section className="max-w-4xl w-full mb-12 px-4 text-center select-text">
+        <h2 className="text-3xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+          About Silero Voice Activity Detection (VAD)
+        </h2>
+        <p className="text-neutral-700 dark:text-neutral-400 text-base leading-relaxed max-w-3xl mx-auto">
+          This app uses <strong>Silero Voice Activity Detection (VAD)</strong>, a lightweight neural network model that detects the presence of speech in real time from your microphone input.
+          It listens continuously and triggers events when you start and stop speaking, capturing audio snippets that you can listen back to.
+          This technology is commonly used in voice assistants, transcription systems, and noise filtering to reliably detect when a user is speaking.
+        </p>
+      </section>
+
       <div
         className="
           grid
@@ -89,6 +101,7 @@ export default function VoiceActivityPage() {
           md:gap-20
           items-center
           px-4
+          flex-grow
           "
       >
         {/* Mic container on left (on desktop col 1), centered vertically */}
