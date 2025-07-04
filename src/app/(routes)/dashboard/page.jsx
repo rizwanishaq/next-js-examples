@@ -1,25 +1,25 @@
 'use client'
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AppHeader from "./_components/AppHeader";
 import AddNewSessionDialog from "./_components/AddNewSessionDialog";
 import HistoryList from "./_components/HistoryList";
 import DoctorList from "./_components/DoctorList";
 import { Home, Calendar, MessageSquare, User, Settings, CreditCard } from 'lucide-react';
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, useUser } from '@clerk/nextjs';
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 
 const allLinks = [
-  { name: "Home", key: "home", icon: "Home" },
-  { name: "Appointments", key: "appointments", icon: "Calendar" },
-  { name: "Messages", key: "messages", icon: "MessageSquare" },
+  { name: "Home", key: "home", icon: Home },
+  { name: "Appointments", key: "appointments", icon: Calendar },
+  { name: "Messages", key: "messages", icon: MessageSquare },
 ];
 
 const accountLinks = [
-  { name: "Profile", key: "profile", icon: "User" },
-  { name: "Settings", key: "settings", icon: "Settings" },
-  { name: "Billing", key: "billing", icon: "CreditCard" },
+  { name: "Profile", key: "profile", icon: User },
+  { name: "Settings", key: "settings", icon: Settings },
+  { name: "Billing", key: "billing", icon: CreditCard },
 ];
 
 const Sidebar = ({ active, setActive, isOpen, toggleSidebar }) => {
@@ -120,6 +120,35 @@ const Dashboard = () => {
   const [activePage, setActivePage] = useState("home");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAddSessionDialogOpen, setIsAddSessionDialogOpen] = useState(false);
+  const { user, isLoaded } = useUser();
+
+  const [os, setOs] = useState("N/A");
+  const [browser, setBrowser] = useState("N/A");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const userAgent = navigator.userAgent;
+      let detectedOs = "Unknown OS";
+      let detectedBrowser = "Unknown Browser";
+
+      // Detect OS
+      if (userAgent.includes("Win")) detectedOs = "Windows";
+      else if (userAgent.includes("Mac")) detectedOs = "macOS";
+      else if (userAgent.includes("Linux")) detectedOs = "Linux";
+      else if (userAgent.includes("Android")) detectedOs = "Android";
+      else if (userAgent.includes("iOS")) detectedOs = "iOS";
+      setOs(detectedOs);
+
+      // Detect Browser
+      if (userAgent.includes("Firefox")) detectedBrowser = "Firefox";
+      else if (userAgent.includes("SamsungBrowser")) detectedBrowser = "Samsung Internet";
+      else if (userAgent.includes("Opera") || userAgent.includes("Opr")) detectedBrowser = "Opera";
+      else if (userAgent.includes("Edge")) detectedBrowser = "Edge";
+      else if (userAgent.includes("Chrome")) detectedBrowser = "Chrome";
+      else if (userAgent.includes("Safari")) detectedBrowser = "Safari";
+      setBrowser(detectedBrowser);
+    }
+  }, []);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -138,7 +167,7 @@ const Dashboard = () => {
       case "home":
         return (
           <>
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center mb-6 pr-4">
               <h2 className="font-extrabold text-4xl text-gray-800">My Dashboard</h2>
               <Button
                 onClick={openAddSessionDialog}
@@ -196,9 +225,61 @@ const Dashboard = () => {
       case "messages":
         return <p className="text-gray-700">Your messages from doctors and staff.</p>;
       case "profile":
-        return <p className="text-gray-700">Manage your personal profile details.</p>;
+        return (
+          <div className="flex flex-col items-center justify-center py-10 bg-white rounded-xl shadow-lg p-8 max-w-2xl mx-auto">
+            <h2 className="font-extrabold text-4xl text-gray-800 mb-8">Welcome, {user?.firstName || "User"}!</h2>
+            {!isLoaded ? (
+              <p className="text-gray-700 text-lg">Loading profile data...</p>
+            ) : user ? (
+              <div className="text-center w-full space-y-6">
+                {user.imageUrl && (
+                  <img
+                    src={user.imageUrl}
+                    alt="User Profile"
+                    className="w-40 h-40 rounded-full object-cover mx-auto shadow-xl border-4 border-blue-600 transform transition-transform duration-300 hover:scale-105"
+                  />
+                )}
+                <div className="space-y-2">
+                  <p className="text-4xl font-extrabold text-gray-900 leading-tight">{user.fullName || "N/A"}</p>
+                  <p className="text-xl text-gray-700 font-medium">{user.primaryEmailAddress?.emailAddress || "N/A"}</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left pt-4 border-t border-gray-200 mt-6">
+                  {user.createdAt && (
+                    <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                      <p className="text-sm font-semibold text-gray-600">Account Created:</p>
+                      <p className="text-base text-gray-800">{new Date(user.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  )}
+                  {user.lastSignInAt && (
+                    <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                      <p className="text-sm font-semibold text-gray-600">Last Sign-in:</p>
+                      <p className="text-base text-gray-800">{new Date(user.lastSignInAt).toLocaleString()}</p>
+                    </div>
+                  )}
+                  <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <p className="text-sm font-semibold text-gray-600">Operating System:</p>
+                    <p className="text-base text-gray-800">{os}</p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+                    <p className="text-sm font-semibold text-gray-600">Browser:</p>
+                    <p className="text-base text-gray-800">{browser}</p>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <p className="text-gray-700 text-lg">No user data available.</p>
+            )}
+          </div>
+        );
       case "settings":
-        return <p className="text-gray-700">Adjust application settings here.</p>;
+        return (
+          <div className="py-10">
+            <h2 className="font-extrabold text-3xl text-gray-800 mb-6">Application Settings</h2>
+            <p className="text-gray-700 text-lg">This section is where you can configure various application settings, preferences, and integrations.</p>
+            {/* Future settings components will go here */}
+          </div>
+        );
       case "billing":
         return <p className="text-gray-700">View your billing history and payment methods.</p>;
       default:
@@ -215,7 +296,7 @@ const Dashboard = () => {
       {/* Main content area needs margin-left on medium and larger screens */}
       {/* Since the NavBar has a height, we also need to add padding-top to the main content
           to prevent it from going under the fixed NavBar. */}
-      <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto overflow-auto md:ml-64 pt-[136px]">
+      <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto overflow-auto md:ml-64 pt-[72px] md:pt-[136px]">
         {renderContent()}
       </main>
 

@@ -121,7 +121,9 @@ export default function DenoiserPage() {
           setOriginalFrame(frameData);
           const enhancedFrame = await processAudioFrame(frameData);
           setProcessedFrame(enhancedFrame);
-          workletNodeRef.current.port.postMessage({ enhancedFrame });
+          if (workletNodeRef.current) {
+            workletNodeRef.current.port.postMessage({ enhancedFrame });
+          }
         }
       };
 
@@ -159,12 +161,11 @@ export default function DenoiserPage() {
 
   return (
     <div className="min-h-screen bg-background px-4 py-10 md:py-20 flex flex-col items-center max-w-7xl mx-auto">
-      <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-slate-800 dark:text-slate-100 leading-tight text-center">
-        Client-Side Audio Denoiser
+      <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-slate-800 dark:text-slate-100 leading-tight text-center">
+        Real-time Audio Denoiser
       </h1>
-      <p className="mt-6 max-w-2xl mx-auto text-lg text-neutral-600 dark:text-neutral-400 text-center">
-        This real-time audio denoiser runs entirely in your browser, using an ONNX model to remove background noise from live audio input.
-        Click the microphone to start or stop denoising.
+      <p className="mt-4 max-w-2xl mx-auto text-base text-neutral-600 dark:text-neutral-400 text-center">
+        Experience real-time audio denoising directly in your browser. Click the microphone to start or stop.
       </p>
       <p className="mt-8 text-center font-semibold text-lg">
         Model Status:{" "}
@@ -182,8 +183,8 @@ export default function DenoiserPage() {
         <Button
           onClick={isRecording ? stopRecording : startRecording}
           disabled={!modelReady}
-          className={`w-24 h-24 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-300
-                     ${isRecording ? "bg-red-500 hover:bg-red-600" : "bg-primary hover:bg-blue-700"}`}
+          className={`w-24 h-24 rounded-full flex items-center justify-center text-white shadow-xl transition-all duration-300
+                     ${isRecording ? "bg-red-500 hover:bg-red-600 animate-pulse" : "bg-gradient-to-r from-blue-700 to-purple-600 hover:brightness-110"}`}
           aria-label={isRecording ? "Stop Recording" : "Start Recording"}
         >
           <Mic size={48} />
