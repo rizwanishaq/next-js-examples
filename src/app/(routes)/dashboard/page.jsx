@@ -6,6 +6,7 @@ import HistoryList from "./_components/HistoryList";
 import DoctorList from "./_components/DoctorList";
 import { Home, Calendar, MessageSquare, User, Settings, CreditCard } from 'lucide-react';
 import { UserButton } from '@clerk/nextjs';
+import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 const allLinks = [
@@ -68,7 +69,7 @@ const Sidebar = ({ active, setActive, isOpen, toggleSidebar }) => {
                   }}
                   className={`w-full text-left px-3 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-3
                     ${active === key
-                      ? "bg-blue-600 text-white font-semibold shadow-md"
+                      ? "bg-blue-600 text-white font-semibold shadow-md shadow-inner"
                       : "text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
                     }`}
                   aria-current={active === key ? "page" : undefined}
@@ -92,7 +93,7 @@ const Sidebar = ({ active, setActive, isOpen, toggleSidebar }) => {
                     }}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-3
                       ${active === key
-                        ? "bg-blue-600 text-white font-semibold shadow-md"
+                        ? "bg-blue-600 text-white font-semibold shadow-md shadow-inner"
                         : "text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
                       }`}
                     aria-current={active === key ? "page" : undefined}
@@ -137,8 +138,8 @@ const Dashboard = () => {
         return (
           <>
             <div className="flex justify-between items-center mb-6">
-              <h2 className="font-extrabold text-3xl text-gray-800">My Dashboard</h2>
-              <button
+              <h2 className="font-extrabold text-4xl text-gray-800">My Dashboard</h2>
+              <Button
                 onClick={openAddSessionDialog}
                 className="hidden md:inline-flex cursor-pointer px-5 py-2 text-base font-semibold rounded-full
                            bg-gradient-to-r from-blue-700 to-purple-600 text-white hover:brightness-110 focus-visible:ring-2 focus-visible:ring-blue-500
@@ -148,14 +149,14 @@ const Dashboard = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
                 <span>Consult with Doctor</span>
-              </button>
+              </Button>
             </div>
             <div className="text-center py-12 border border-gray-200 rounded-lg bg-white mb-6">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
               </svg>
               <p className="text-gray-700 mb-4">You haven't started any consultations yet.</p>
-              <button
+              <Button
                 onClick={openAddSessionDialog}
                 className="cursor-pointer px-4 py-2 text-base font-semibold rounded-md
                            bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:brightness-110 focus-visible:ring-2 focus:ring-blue-500
@@ -165,7 +166,7 @@ const Dashboard = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
                 <span>Consult with Doctor</span>
-              </button>
+              </Button>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="bg-white p-6 rounded-lg shadow-md">
