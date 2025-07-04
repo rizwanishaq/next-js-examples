@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from "react";
 import * as ort from "onnxruntime-web";
 import WaveformCanvas from "./_components/WavformCanvas";
 
+import { Button } from "@/components/ui/button";
+
 let session = null;
 let modelState = null;
 let attenLimDb = null;
@@ -155,74 +157,47 @@ export default function DenoiserPage() {
   };
 
   return (
-    <div
-      style={{
-        padding: "20px",
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
-        maxWidth: 900,
-        margin: "0 auto",
-      }}
-    >
-      <h1 style={{ textAlign: "center", color: "#264653" }}>Client-Side Audio Denoiser (48kHz, AudioWorklet)</h1>
-      <p style={{ textAlign: "center", fontWeight: "600", marginBottom: 24 }}>
+    <div className="min-h-screen bg-background px-4 py-10 md:py-20 flex flex-col items-center max-w-7xl mx-auto">
+      <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-slate-800 dark:text-slate-100 leading-tight text-center">
+        Client-Side Audio Denoiser
+      </h1>
+      <p className="mt-6 max-w-2xl mx-auto text-lg text-neutral-600 dark:text-neutral-400 text-center">
+        This page demonstrates a real-time audio denoiser running entirely in your browser.
+        It uses a pre-trained ONNX (Open Neural Network Exchange) model to remove background noise
+        from live audio input, providing a cleaner sound experience. The processing is handled
+        efficiently using WebAssembly (WASM) and AudioWorklets for low-latency performance.
+      </p>
+      <p className="mt-4 max-w-2xl mx-auto text-lg text-neutral-600 dark:text-neutral-400 text-center">
+        Simply click "Start Live Denoising" to begin. You'll see the original and denoised
+        waveforms in real-time, showcasing the model's ability to clean up audio.
+      </p>
+      <p className="mt-8 text-center font-semibold text-lg">
         Model Status:{" "}
-        <span style={{ color: modelReady ? "#2a9d8f" : "#e76f51", fontWeight: "700" }}>
+        <span className={modelReady ? "text-green-600" : "text-red-600"}>
           {modelReady ? "Loaded" : "Loading..."}
         </span>
       </p>
       {error && (
-        <p
-          style={{
-            color: "#e63946",
-            fontWeight: "700",
-            textAlign: "center",
-            marginBottom: 24,
-            userSelect: "none",
-          }}
-        >
+        <p className="text-red-600 font-bold text-center mb-6">
           Error: {error}
         </p>
       )}
 
-      <div style={{ textAlign: "center", marginBottom: 40 }}>
-        <button
+      <div className="text-center my-10">
+        <Button
           onClick={isRecording ? stopRecording : startRecording}
           disabled={!modelReady}
-          style={{
-            padding: "14px 32px",
-            fontSize: 18,
-            fontWeight: "600",
-            backgroundColor: isRecording ? "#e63946" : "#2a9d8f",
-            color: "white",
-            border: "none",
-            borderRadius: 30,
-            cursor: "pointer",
-            boxShadow: "0 4px 14px rgba(42, 157, 143, 0.5)",
-            transition: "background-color 0.3s ease",
-          }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = isRecording ? "#d62828" : "#21867a")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = isRecording ? "#e63946" : "#2a9d8f")
-          }
+          className="px-8 py-4 text-lg font-semibold rounded-full
+                     bg-gradient-to-r from-primary to-purple-600 text-white hover:brightness-110 focus-visible:ring-2 focus-visible:ring-primary
+                     transition duration-200 shadow-md"
         >
           {isRecording ? "Stop Live Denoising" : "Start Live Denoising"}
-        </button>
+        </Button>
       </div>
 
       {originalFrame && (
         <>
-          <p
-            style={{
-              marginBottom: 12,
-              fontWeight: "700",
-              fontSize: 20,
-              color: "#264653",
-              textAlign: "center",
-              userSelect: "none",
-            }}
-          >
+          <p className="mb-3 font-bold text-xl text-slate-800 dark:text-slate-100 text-center">
             Original Frame Waveform
           </p>
           <WaveformCanvas data={originalFrame} color="#1f8ef1" />
@@ -231,32 +206,14 @@ export default function DenoiserPage() {
 
       {processedFrame && (
         <>
-          <p
-            style={{
-              marginTop: 48,
-              marginBottom: 12,
-              fontWeight: "700",
-              fontSize: 20,
-              color: "#2a9d8f",
-              textAlign: "center",
-              userSelect: "none",
-            }}
-          >
+          <p className="mt-12 mb-3 font-bold text-xl text-green-600 text-center">
             Denoised Frame Waveform
           </p>
           <WaveformCanvas data={processedFrame} color="#2ca86c" />
         </>
       )}
 
-      <p
-        style={{
-          fontSize: 13,
-          color: "#8892a0",
-          textAlign: "center",
-          marginTop: 40,
-          userSelect: "none",
-        }}
-      >
+      <p className="text-sm text-neutral-500 text-center mt-10">
         Note: AudioWorklet is used for smooth low-latency playback. ONNX runs on the main thread,
         streamed from the worklet.
       </p>

@@ -8,6 +8,7 @@ import { Home, Calendar, MessageSquare, User, Settings, CreditCard } from 'lucid
 import { UserButton } from '@clerk/nextjs';
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 
 const allLinks = [
   { name: "Home", key: "home", icon: "Home" },
