@@ -1,18 +1,23 @@
 'use client'
 import React, { useState } from "react";
+import AppHeader from "./_components/AppHeader";
 import AddNewSessionDialog from "./_components/AddNewSessionDialog";
 import HistoryList from "./_components/HistoryList";
 import DoctorList from "./_components/DoctorList";
-import Link from "next/link";
+import { Home, Calendar, MessageSquare, User, Settings, CreditCard } from 'lucide-react';
+import { UserButton } from '@clerk/nextjs';
 import Image from "next/image";
 
 const allLinks = [
-  { name: "Home", key: "home" },
-  { name: "Appointments", key: "appointments" },
-  { name: "Messages", key: "messages" },
-  { name: "Profile", key: "profile" },
-  { name: "Settings", key: "settings" },
-  { name: "Billing", key: "billing" }
+  { name: "Home", key: "home", icon: "Home" },
+  { name: "Appointments", key: "appointments", icon: "Calendar" },
+  { name: "Messages", key: "messages", icon: "MessageSquare" },
+];
+
+const accountLinks = [
+  { name: "Profile", key: "profile", icon: "User" },
+  { name: "Settings", key: "settings", icon: "Settings" },
+  { name: "Billing", key: "billing", icon: "CreditCard" },
 ];
 
 const Sidebar = ({ active, setActive, isOpen, toggleSidebar }) => {
@@ -29,7 +34,7 @@ const Sidebar = ({ active, setActive, isOpen, toggleSidebar }) => {
       {/* Sidebar - Responsive Design */}
       <nav
         className={`fixed top-0 left-0 bottom-0 w-64 bg-gray-50 text-gray-900
-                   flex flex-col justify-between shadow-lg z-50
+                   flex flex-col justify-between shadow-xl z-50 border-r border-gray-200
                    transform transition-transform duration-300 ease-out
                    ${isOpen ? "translate-x-0" : "-translate-x-full"}
                    md:translate-x-0 md:flex`}
@@ -37,33 +42,60 @@ const Sidebar = ({ active, setActive, isOpen, toggleSidebar }) => {
         <div className="flex flex-col h-full">
           {/* Adjusted padding-top to align with main NavBar */}
           {/* Added flex and items-center to mimic the NavBar's logo alignment */}
-          <div className="flex items-center px-4" style={{ minHeight: '64px' /* This matches NavBar height (py-4 * 2 + 48px image) */ }}>
+          <div className="flex items-center px-4 py-4" style={{ minHeight: '64px' }}>
+            <Image src="/logo.svg" alt="Logo" width={32} height={32} className="mr-2" />
             <h1 className="text-2xl font-bold text-gray-900">My App</h1>
           </div>
 
-          <ul className="flex-grow px-4">
-            {allLinks.map(({ name, key }) => (
+          <ul className="flex-grow px-4 mt-6">
+            {allLinks.map(({ name, key, icon: Icon }) => (
               <li key={key} className="mb-2">
                 <button
                   onClick={() => {
                     setActive(key);
                     if (isOpen) toggleSidebar();
                   }}
-                  className={`w-full text-left px-4 py-2 rounded-md transition-colors duration-200
+                  className={`w-full text-left px-4 py-2 rounded-md transition-colors duration-200 flex items-center space-x-3
                     ${active === key
-                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold shadow-md"
+                      ? "bg-blue-600 text-white font-semibold shadow-md"
                       : "text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
                     }`}
                   aria-current={active === key ? "page" : undefined}
                 >
-                  {name}
+                  {Icon && <Icon className="h-5 w-5" />}
+                  <span>{name}</span>
                 </button>
               </li>
             ))}
           </ul>
 
-          <div className="flex justify-center mt-6 pb-6">
-              <span className="text-gray-500 text-sm">N</span>
+          <div className="px-4 mt-auto mb-6">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Account</h3>
+            <ul className="mb-4">
+              {accountLinks.map(({ name, key, icon: Icon }) => (
+                <li key={key} className="mb-2">
+                  <button
+                    onClick={() => {
+                      setActive(key);
+                      if (isOpen) toggleSidebar();
+                    }}
+                    className={`w-full text-left px-4 py-2 rounded-md transition-colors duration-200 flex items-center space-x-3
+                      ${active === key
+                        ? "bg-blue-600 text-white font-semibold shadow-md"
+                        : "text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
+                      }`}
+                    aria-current={active === key ? "page" : undefined}
+                  >
+                    {Icon && <Icon className="h-5 w-5" />}
+                    <span>{name}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+            <div className="flex items-center px-4 py-2 rounded-md bg-gray-100">
+              <UserButton afterSignOutUrl="/" appearance={{ elements: { avatarBox: 'h-8 w-8' } }} />
+              <span className="ml-3 text-gray-700 font-medium">Manage Account</span>
+            </div>
           </div>
         </div>
       </nav>
@@ -74,9 +106,18 @@ const Sidebar = ({ active, setActive, isOpen, toggleSidebar }) => {
 const Dashboard = () => {
   const [activePage, setActivePage] = useState("home");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isAddSessionDialogOpen, setIsAddSessionDialogOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const openAddSessionDialog = () => {
+    setIsAddSessionDialogOpen(true);
+  };
+
+  const closeAddSessionDialog = () => {
+    setIsAddSessionDialogOpen(false);
   };
 
   const renderContent = () => {
@@ -87,6 +128,7 @@ const Dashboard = () => {
             <div className="flex justify-between items-center mb-6">
               <h2 className="font-extrabold text-3xl text-gray-800">My Dashboard</h2>
               <button
+                onClick={openAddSessionDialog}
                 className="hidden md:inline-flex cursor-pointer px-5 py-2 text-base font-semibold rounded-full
                            bg-gradient-to-r from-blue-700 to-purple-600 text-white hover:brightness-110 focus-visible:ring-2 focus-visible:ring-blue-500
                            transition duration-200 shadow-md"
@@ -103,8 +145,9 @@ const Dashboard = () => {
               </svg>
               <p className="text-gray-700 mb-4">You haven't started any consultations yet.</p>
               <button
+                onClick={openAddSessionDialog}
                 className="cursor-pointer px-4 py-2 text-base font-semibold rounded-md
-                           bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:brightness-110 focus-visible:ring-2 focus-visible:ring-blue-500
+                           bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:brightness-110 focus-visible:ring-2 focus:ring-blue-500
                            transition duration-200 shadow-md flex items-center justify-center mx-auto space-x-2"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -146,25 +189,21 @@ const Dashboard = () => {
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      {/* Mobile menu toggle button (replace with your actual header's hamburger icon) */}
-      <button
-        onClick={toggleSidebar}
-        className="fixed top-4 left-4 z-50 md:hidden p-2 rounded-md bg-purple-600 text-white"
-        aria-label="Toggle sidebar"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
+      <AppHeader toggleSidebar={toggleSidebar} />
 
       <Sidebar active={activePage} setActive={setActivePage} isOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
 
       {/* Main content area needs margin-left on medium and larger screens */}
       {/* Since the NavBar has a height, we also need to add padding-top to the main content
           to prevent it from going under the fixed NavBar. */}
-      <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto overflow-auto md:ml-64 pt-[64px]"> {/* Added pt-[64px] */}
+      <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto overflow-auto md:ml-64 pt-[72px]">
         {renderContent()}
       </main>
+
+      <AddNewSessionDialog
+        isOpen={isAddSessionDialogOpen}
+        onClose={closeAddSessionDialog}
+      />
     </div>
   );
 };

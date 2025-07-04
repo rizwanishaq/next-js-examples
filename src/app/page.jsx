@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-background px-4 py-10 md:py-20 flex flex-col items-center">
+    <div className="min-h-screen bg-background px-6 md:px-8 py-10 md:py-20 flex flex-col items-center max-w-7xl mx-auto">
 
       <main className="z-10 mt-12 text-center">
         <motion.h1
