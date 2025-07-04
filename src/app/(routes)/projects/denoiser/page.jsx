@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import * as ort from "onnxruntime-web";
 import WaveformCanvas from "./_components/WavformCanvas";
 
+import { Mic } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 let session = null;
@@ -162,14 +163,8 @@ export default function DenoiserPage() {
         Client-Side Audio Denoiser
       </h1>
       <p className="mt-6 max-w-2xl mx-auto text-lg text-neutral-600 dark:text-neutral-400 text-center">
-        This page demonstrates a real-time audio denoiser running entirely in your browser.
-        It uses a pre-trained ONNX (Open Neural Network Exchange) model to remove background noise
-        from live audio input, providing a cleaner sound experience. The processing is handled
-        efficiently using WebAssembly (WASM) and AudioWorklets for low-latency performance.
-      </p>
-      <p className="mt-4 max-w-2xl mx-auto text-lg text-neutral-600 dark:text-neutral-400 text-center">
-        Simply click "Start Live Denoising" to begin. You'll see the original and denoised
-        waveforms in real-time, showcasing the model's ability to clean up audio.
+        This real-time audio denoiser runs entirely in your browser, using an ONNX model to remove background noise from live audio input.
+        Click the microphone to start or stop denoising.
       </p>
       <p className="mt-8 text-center font-semibold text-lg">
         Model Status:{" "}
@@ -187,11 +182,11 @@ export default function DenoiserPage() {
         <Button
           onClick={isRecording ? stopRecording : startRecording}
           disabled={!modelReady}
-          className="px-8 py-4 text-lg font-semibold rounded-full
-                     bg-gradient-to-r from-primary to-purple-600 text-white hover:brightness-110 focus-visible:ring-2 focus-visible:ring-primary
-                     transition duration-200 shadow-md"
+          className={`w-24 h-24 rounded-full flex items-center justify-center text-white shadow-lg transition-all duration-300
+                     ${isRecording ? "bg-red-500 hover:bg-red-600" : "bg-primary hover:bg-blue-700"}`}
+          aria-label={isRecording ? "Stop Recording" : "Start Recording"}
         >
-          {isRecording ? "Stop Live Denoising" : "Start Live Denoising"}
+          <Mic size={48} />
         </Button>
       </div>
 
