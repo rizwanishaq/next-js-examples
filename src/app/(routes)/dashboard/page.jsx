@@ -33,7 +33,7 @@ const Sidebar = ({ active, setActive, isOpen, toggleSidebar }) => {
 
       {/* Sidebar - Responsive Design */}
       <nav
-        className={`fixed top-0 left-0 bottom-0 w-64 bg-gray-50 text-gray-900
+        className={`fixed top-[72px] left-0 bottom-0 w-64 bg-gray-50 text-gray-900
                    flex flex-col justify-between shadow-xl z-50 border-r border-gray-200
                    transform transition-transform duration-300 ease-out
                    ${isOpen ? "translate-x-0" : "-translate-x-full"}
@@ -196,7 +196,7 @@ const Dashboard = () => {
       {/* Main content area needs margin-left on medium and larger screens */}
       {/* Since the NavBar has a height, we also need to add padding-top to the main content
           to prevent it from going under the fixed NavBar. */}
-      <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto overflow-auto md:ml-64 pt-[72px]">
+      <main className="flex-1 p-6 md:p-8 max-w-7xl mx-auto overflow-auto md:ml-64 pt-[136px]">
         {renderContent()}
       </main>
 
