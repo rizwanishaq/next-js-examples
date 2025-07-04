@@ -43,19 +43,30 @@ const Sidebar = ({ active, setActive, isOpen, toggleSidebar }) => {
           {/* Adjusted padding-top to align with main NavBar */}
           {/* Added flex and items-center to mimic the NavBar's logo alignment */}
           <div className="flex items-center px-4 py-4" style={{ minHeight: '64px' }}>
-            <Image src="/logo.svg" alt="Logo" width={32} height={32} className="mr-2" />
-            <h1 className="text-2xl font-bold text-gray-900">My App</h1>
+            <Link href="/" className="flex items-center gap-3">
+              <Image
+                src="/logo.svg"
+                alt="AI Agent Logo"
+                width={32}
+                height={32}
+                className="hover:opacity-80 transition-opacity"
+                priority
+              />
+              <span className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-slate-100 select-none">
+                AI Agent
+              </span>
+            </Link>
           </div>
 
-          <ul className="flex-grow px-4 mt-6">
+          <ul className="flex-grow px-2 mt-6">
             {allLinks.map(({ name, key, icon: Icon }) => (
-              <li key={key} className="mb-2">
+              <li key={key} className="mb-1">
                 <button
                   onClick={() => {
                     setActive(key);
                     if (isOpen) toggleSidebar();
                   }}
-                  className={`w-full text-left px-4 py-2 rounded-md transition-colors duration-200 flex items-center space-x-3
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-3
                     ${active === key
                       ? "bg-blue-600 text-white font-semibold shadow-md"
                       : "text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
@@ -69,17 +80,17 @@ const Sidebar = ({ active, setActive, isOpen, toggleSidebar }) => {
             ))}
           </ul>
 
-          <div className="px-4 mt-auto mb-6">
+          <div className="px-2 mt-auto mb-4">
             <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Account</h3>
-            <ul className="mb-4">
+            <ul className="mb-2">
               {accountLinks.map(({ name, key, icon: Icon }) => (
-                <li key={key} className="mb-2">
+                <li key={key} className="mb-1">
                   <button
                     onClick={() => {
                       setActive(key);
                       if (isOpen) toggleSidebar();
                     }}
-                    className={`w-full text-left px-4 py-2 rounded-md transition-colors duration-200 flex items-center space-x-3
+                    className={`w-full text-left px-3 py-2 rounded-lg transition-colors duration-200 flex items-center space-x-3
                       ${active === key
                         ? "bg-blue-600 text-white font-semibold shadow-md"
                         : "text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
@@ -92,7 +103,7 @@ const Sidebar = ({ active, setActive, isOpen, toggleSidebar }) => {
                 </li>
               ))}
             </ul>
-            <div className="flex items-center px-4 py-2 rounded-md bg-gray-100">
+            <div className="flex items-center px-3 py-2 rounded-lg bg-gray-100">
               <UserButton afterSignOutUrl="/" appearance={{ elements: { avatarBox: 'h-8 w-8' } }} />
               <span className="ml-3 text-gray-700 font-medium">Manage Account</span>
             </div>
@@ -156,19 +167,25 @@ const Dashboard = () => {
                 <span>Consult with Doctor</span>
               </button>
             </div>
-            <div className="bg-white p-6 rounded-lg shadow mb-6 h-48">
-              <h3 className="font-semibold text-lg mb-2">Recent Activity</h3>
-              <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow mb-6 h-48">
-              <h3 className="font-semibold text-lg mb-2">Upcoming Events</h3>
-              <p>Curabitur pretium tincidunt lacus. Nulla facilisi. Aenean feugiat, purus sit amet laoreet facilisis, libero ex mollis nisi, id fringilla nulla libero in libero. Nullam consectetur, magna eu semper lacinia, felis lorem facilisis metus, sed consectetur nunc libero sit amet justo.</p>
-            </div>
-            <HistoryList />
-            <DoctorList />
-            <div className="bg-white p-6 rounded-lg shadow mb-6 h-48">
-              <h3 className="font-semibold text-lg mb-2">More Content</h3>
-              <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit amet ligula. Proin eget tortor risus. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem.</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="font-semibold text-lg mb-2">Recent Activity</h3>
+                <p className="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="font-semibold text-lg mb-2">Upcoming Events</h3>
+                <p className="text-gray-700">Curabitur pretium tincidunt lacus. Nulla facilisi. Aenean feugiat, purus sit amet laoreet facilisis, libero ex mollis nisi, id fringilla nulla libero in libero. Nullam consectetur, magna eu semper lacinia, felis lorem facilisis metus, sed consectetur nunc libero sit amet justo.</p>
+              </div>
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <h3 className="font-semibold text-lg mb-2">More Content</h3>
+                <p className="text-gray-700">Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit amet ligula. Proin eget tortor risus. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem.</p>
+              </div>
+              <div className="col-span-full bg-white p-6 rounded-lg shadow-md">
+                <HistoryList />
+              </div>
+              <div className="col-span-full bg-white p-6 rounded-lg shadow-md">
+                <DoctorList />
+              </div>
             </div>
           </>
         );
