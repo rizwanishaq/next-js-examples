@@ -39,7 +39,7 @@
   --color-card: var(--card);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
+  --radius-lg: var( --radius);
   --radius-xl: calc(var(--radius) + 4px);
 }
 
@@ -119,4 +119,172 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Custom styles for react-calendar */
+.react-calendar {
+  width: 100%;
+  max-width: 100%;
+  background-color: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  font-family: var(--font-sans);
+  line-height: 1.125em;
+  box-shadow: var(--shadow-md); /* Use a shadow variable if defined, otherwise a standard shadow */
+}
+
+.react-calendar__navigation button {
+  min-width: 44px;
+  background: none;
+  color: var(--foreground);
+  font-weight: 600;
+  font-size: 1.1em;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background-color: var(--muted);
+  border-radius: var(--radius-sm);
+}
+
+.react-calendar__month-view__weekdays {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 500;
+  font-size: 0.75em;
+  color: var(--muted-foreground);
+}
+
+.react-calendar__month-view__weekdays__weekday {
+  padding: 0.5em;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: var(--destructive);
+}
+
+.react-calendar__tile {
+  padding: 0.75em 0.5em;
+  background: none;
+  color: var(--foreground);
+  border-radius: var(--radius-sm);
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background-color: var(--muted);
+}
+
+.react-calendar__tile--now {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.react-calendar__tile--now:enabled:hover,
+.react-calendar__tile--now:enabled:focus {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.react-calendar__tile--active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.react-calendar__tile--hasActive {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.react-calendar__tile--hasActive:enabled:hover,
+.react-calendar__tile--hasActive:enabled:focus {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.react-calendar__navigation button[disabled] {
+  background-color: transparent;
+  color: var(--muted-foreground);
+}
+
+.react-calendar__tile--range {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: 0;
+}
+
+.react-calendar__tile--rangeStart {
+  border-top-left-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
+}
+
+.react-calendar__tile--rangeEnd {
+  border-top-right-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+.react-calendar__tile--rangeBothSides {
+  border-radius: var(--radius-sm);
+}
+
+.react-calendar__tile--rangeStart.react-calendar__tile--rangeEnd {
+  border-radius: var(--radius-sm);
+}
+
+.react-calendar__tile:disabled {
+  background-color: var(--background);
+  color: var(--muted-foreground);
+}
+
+.react-calendar__tile--hasActive:enabled:hover,
+.react-calendar__tile--hasActive:enabled:focus {
+  background: var(--primary);
+}
+
+.react-calendar__tile--active:enabled:hover,
+.react-calendar__tile--active:enabled:focus {
+  background: var(--primary);
+}
+
+.react-calendar__tile--now:enabled:hover,
+.react-calendar__tile--now:enabled:focus {
+  background: var(--accent);
+}
+
+.react-calendar__tile--now {
+  background: var(--accent);
+}
+
+.react-calendar__tile--active {
+  background: var(--primary);
+}
+
+.react-calendar__tile--hasActive {
+  background: var(--primary);
+}
+
+.react-calendar__tile--range {
+  background: var(--primary);
+}
+
+.react-calendar__tile--rangeStart {
+  background: var(--primary);
+}
+
+.react-calendar__tile--rangeEnd {
+  background: var(--primary);
+}
+
+.react-calendar__tile--rangeBothSides {
+  background: var(--primary);
+}
+
+.react-calendar__tile--rangeStart.react-calendar__tile--rangeEnd {
+  background: var(--primary);
 }

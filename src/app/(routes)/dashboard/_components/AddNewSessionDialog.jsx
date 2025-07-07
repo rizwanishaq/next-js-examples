@@ -25,9 +25,7 @@ const AddNewSessionDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="secondary" >
-          + Consult with Doctor
-        </Button>
+        
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-lg sm:rounded-lg">
