@@ -226,50 +226,73 @@ const Dashboard = () => {
         return <p className="text-gray-700">Your messages from doctors and staff.</p>;
       case "profile":
         return (
-          <div className="flex flex-col items-center justify-center py-10 bg-white rounded-xl shadow-lg p-8 max-w-2xl mx-auto">
-            <h2 className="font-extrabold text-4xl text-gray-800 mb-8">Welcome, {user?.firstName || "User"}!</h2>
-            {!isLoaded ? (
-              <p className="text-gray-700 text-lg">Loading profile data...</p>
-            ) : user ? (
-              <div className="text-center w-full space-y-6">
+          <div className="p-4 md:p-8">
+            <h1 className="text-3xl font-bold text-gray-900 mb-6">Profile</h1>
+            <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
+              <div className="flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8">
                 {user.imageUrl && (
-                  <img
-                    src={user.imageUrl}
-                    alt="User Profile"
-                    className="w-40 h-40 rounded-full object-cover mx-auto shadow-xl border-4 border-blue-600 transform transition-transform duration-300 hover:scale-105"
-                  />
-                )}
-                <div className="space-y-2">
-                  <p className="text-4xl font-extrabold text-gray-900 leading-tight">{user.fullName || "N/A"}</p>
-                  <p className="text-xl text-gray-700 font-medium">{user.primaryEmailAddress?.emailAddress || "N/A"}</p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-left pt-4 border-t border-gray-200 mt-6">
-                  {user.createdAt && (
-                    <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-                      <p className="text-sm font-semibold text-gray-600">Account Created:</p>
-                      <p className="text-base text-gray-800">{new Date(user.createdAt).toLocaleDateString()}</p>
-                    </div>
-                  )}
-                  {user.lastSignInAt && (
-                    <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-                      <p className="text-sm font-semibold text-gray-600">Last Sign-in:</p>
-                      <p className="text-base text-gray-800">{new Date(user.lastSignInAt).toLocaleString()}</p>
-                    </div>
-                  )}
-                  <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-                    <p className="text-sm font-semibold text-gray-600">Operating System:</p>
-                    <p className="text-base text-gray-800">{os}</p>
+                  <div className="relative">
+                    <img
+                      src={user.imageUrl}
+                      alt="User Profile"
+                      className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-lg"
+                    />
+                    <button className="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors shadow-md">
+                      <User className="h-4 w-4" />
+                    </button>
                   </div>
-                  <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-                    <p className="text-sm font-semibold text-gray-600">Browser:</p>
-                    <p className="text-base text-gray-800">{browser}</p>
+                )}
+                <div className="text-center md:text-left">
+                  <h2 className="text-3xl font-bold text-gray-800">{user.fullName || "N/A"}</h2>
+                  <p className="text-lg text-gray-500 mt-1">{user.primaryEmailAddress?.emailAddress || "N/A"}</p>
+                  <div className="mt-4 flex justify-center md:justify-start gap-2">
+                    <span className="inline-block bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Online</span>
+                    <span className="inline-block bg-gray-100 text-gray-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">Free Plan</span>
+                  </div>
+                </div>
+                <div className="md:ml-auto">
+                  <Button className="bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                    Edit Profile
+                  </Button>
+                </div>
+              </div>
+
+              <div className="mt-8 border-t border-gray-200 pt-8">
+                <h3 className="text-xl font-bold text-gray-800 mb-4">Account Information</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div className="bg-gray-50 p-4 rounded-xl">
+                    <p className="text-sm font-medium text-gray-500">Account Created</p>
+                    <p className="text-lg font-semibold text-gray-800">{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "N/A"}</p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-xl">
+                    <p className="text-sm font-medium text-gray-500">Last Sign-in</p>
+                    <p className="text-lg font-semibold text-gray-800">{user.lastSignInAt ? new Date(user.lastSignInAt).toLocaleString() : "N/A"}</p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-xl">
+                    <p className="text-sm font-medium text-gray-500">Operating System</p>
+                    <p className="text-lg font-semibold text-gray-800">{os}</p>
+                  </div>
+                  <div className="bg-gray-50 p-4 rounded-xl">
+                    <p className="text-sm font-medium text-gray-500">Browser</p>
+                    <p className="text-lg font-semibold text-gray-800">{browser}</p>
                   </div>
                 </div>
               </div>
-            ) : (
-              <p className="text-gray-700 text-lg">No user data available.</p>
-            )}
+
+              <div className="mt-8 border-t border-gray-200 pt-8">
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">Manage Account</h3>
+                  <div className="space-y-4">
+                      <Button variant="outline" className="w-full md:w-auto justify-start">
+                          <Settings className="mr-2 h-4 w-4" />
+                          Go to Settings
+                      </Button>
+                      <Button variant="outline" className="w-full md:w-auto justify-start">
+                          <CreditCard className="mr-2 h-4 w-4" />
+                          Manage Billing
+                      </Button>
+                  </div>
+              </div>
+            </div>
           </div>
         );
       case "settings":
