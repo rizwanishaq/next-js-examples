@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import AddNewSessionDialog from "./_components/AddNewSessionDialog";
 import HistoryList from "./_components/HistoryList";
 import DoctorList from "./_components/DoctorList";
-import { Home, Calendar as CalendarIcon, MessageSquare, User, Settings, CreditCard, Clock, Menu } from 'lucide-react';
+import StockCryptoNews from "./_components/StockCryptoNews";
+import { Home, Calendar as CalendarIcon, MessageSquare, User, Settings, CreditCard, Clock, Menu, TrendingUp } from 'lucide-react';
 import { PricingTable, UserButton, useUser } from '@clerk/nextjs';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -16,6 +17,7 @@ const allLinks = [
   { name: "Home", key: "home", icon: Home },
   { name: "Appointments", key: "appointments", icon: CalendarIcon },
   { name: "Messages", key: "messages", icon: MessageSquare },
+  { name: "Markets", key: "markets", icon: TrendingUp },
 ];
 
 const accountLinks = [
@@ -377,6 +379,8 @@ const Dashboard = () => {
             </div>
           </div>
         );
+      case "markets":
+        return <StockCryptoNews />;
       default:
         return <p className="text-gray-700">Select an option from the sidebar.</p>;
     }
