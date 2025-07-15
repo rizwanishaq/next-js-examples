@@ -7,27 +7,29 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogClose,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 
-const AddNewSessionDialog = () => {
-  const [note, setNote] = useState();
+const AddNewSessionDialog = ({ isOpen, onClose }) => {
+  const [note, setNote] = useState('');
 
   const handleStartConsultation = () => {
     // TODO: Handle submit logic here (e.g., API call)
     alert("Consultation started with details: " + note);
+    onClose();
+  };
+
+  const handleOpenChange = (open) => {
+    if (!open) {
+      onClose();
+    }
   };
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        
-      </DialogTrigger>
-
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-lg sm:rounded-lg">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold">
