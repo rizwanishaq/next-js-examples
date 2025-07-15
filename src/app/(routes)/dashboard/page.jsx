@@ -3,9 +3,10 @@ import React, { useState, useEffect } from "react";
 
 import AddNewSessionDialog from "./_components/AddNewSessionDialog";
 import HistoryList from "./_components/HistoryList";
-import DoctorList from "./_components/DoctorList";
 import StockCryptoNews from "./_components/StockCryptoNews";
-import { Home, Calendar as CalendarIcon, MessageSquare, User, Settings, CreditCard, Clock, Menu, TrendingUp } from 'lucide-react';
+import ProjectsList from "./_components/ProjectsList";
+import BlogsList from "./_components/BlogsList";
+import { Home, Calendar as CalendarIcon, MessageSquare, User, Settings, CreditCard, Clock, Menu, TrendingUp, Folder, FileText, PlusCircle } from 'lucide-react';
 import { PricingTable, UserButton, useUser } from '@clerk/nextjs';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -15,6 +16,8 @@ import Link from "next/link";
 
 const allLinks = [
   { name: "Home", key: "home", icon: Home },
+  { name: "Projects", key: "projects", icon: Folder },
+  { name: "Blogs", key: "blogs", icon: FileText },
   { name: "Appointments", key: "appointments", icon: CalendarIcon },
   { name: "Messages", key: "messages", icon: MessageSquare },
   { name: "Markets", key: "markets", icon: TrendingUp },
@@ -187,45 +190,30 @@ const Dashboard = () => {
       case "home":
         return (
           <>
-            <div className="flex justify-between items-center mb-4 pr-4">
-              <h2 className="font-extrabold text-4xl text-gray-800">My Dashboard</h2>
-              
-            </div>
-            <div className="text-center py-6 border border-gray-200 rounded-lg bg-white mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-              </svg>
-              <p className="text-gray-700 mb-4">You haven't started any consultations yet.</p>
+            <div className="text-center py-12 border border-gray-200 rounded-lg bg-white mb-8">
+              <h2 className="font-extrabold text-4xl text-gray-800 mb-2">Welcome Back, {user?.firstName || 'User'}!</h2>
+              <p className="text-gray-600 mb-6">Ready to start a new session? Click the button below.</p>
               <Button
                 onClick={openAddSessionDialog}
-                className="cursor-pointer px-4 py-2 text-base font-semibold rounded-md
+                className="cursor-pointer px-6 py-3 text-lg font-semibold rounded-md
                            bg-gradient-to-r from-primary to-purple-600 text-white hover:brightness-110 focus-visible:ring-2 focus:ring-primary
-                           transition duration-200 shadow-md flex items-center justify-center mx-auto space-x-2"
+                           transition duration-200 shadow-lg flex items-center justify-center mx-auto space-x-2"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                <span>Consult with Doctor</span>
+                <PlusCircle className="h-6 w-6" />
+                <span>Start a New Session</span>
               </Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div className="bg-card p-6 rounded-lg shadow-lg">
-                <h3 className="font-semibold text-lg mb-2">Recent Activity</h3>
-                <p className="text-gray-700">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            <div className="grid grid-cols-1 gap-8">
+              <div className="col-span-full bg-card p-6 rounded-lg shadow-lg">
+                <h3 className="font-semibold text-xl mb-4">Projects</h3>
+                <ProjectsList />
               </div>
-              <div className="bg-card p-6 rounded-lg shadow-lg">
-                <h3 className="font-semibold text-lg mb-2">Upcoming Events</h3>
-                <p className="text-gray-700">Curabitur pretium tincidunt lacus. Nulla facilisi. Aenean feugiat, purus sit amet laoreet facilisis, libero ex mollis nisi, id fringilla nulla libero in libero. Nullam consectetur, magna eu semper lacinia, felis lorem facilisis metus, sed consectetur nunc libero sit amet justo.</p>
-              </div>
-              <div className="bg-card p-6 rounded-lg shadow-lg">
-                <h3 className="font-semibold text-lg mb-2">More Content</h3>
-                <p className="text-gray-700">Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec velit neque, auctor sit amet aliquam vel, ullamcorper sit amet ligula. Proin eget tortor risus. Curabitur arcu erat, accumsan id imperdiet et, porttitor at sem.</p>
+              <div className="col-span-full bg-card p-6 rounded-lg shadow-lg">
+                <h3 className="font-semibold text-xl mb-4">Blogs</h3>
+                <BlogsList />
               </div>
               <div className="col-span-full bg-card p-6 rounded-lg shadow-lg">
                 <HistoryList />
-              </div>
-              <div className="col-span-full bg-card p-6 rounded-lg shadow-lg">
-                <DoctorList />
               </div>
             </div>
           </>
@@ -381,6 +369,10 @@ const Dashboard = () => {
         );
       case "markets":
         return <StockCryptoNews />;
+      case "projects":
+        return <ProjectsList />;
+      case "blogs":
+        return <BlogsList />;
       default:
         return <p className="text-gray-700">Select an option from the sidebar.</p>;
     }
